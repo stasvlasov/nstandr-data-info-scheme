@@ -75,14 +75,17 @@
       "type": "object",
       "properties": {
         "src": {
+          "description": "Source code or software used for creating this dataset",
           "type": "array",
           "items": { "$ref": "#/$defs/src" }
         },
         "scripts": {
+          "description": "Scripts for working with this dataset. E.g., data deployment, data derivations, etc.",
           "type": "array",
           "items": { "$ref": "#/$defs/file" }
         },
         "files": {
+          "description": "List of data files",
           "type": "array",
           "items": {
             "allOf": [
@@ -91,9 +94,11 @@
                 "type": "object",
                 "properties": {
                   "period": {
+                    "description": "Time period that the data files describe",
                     "type": "string"
                   },
                   "sources": {
+                    "description": "Sources used for making the data files", 
                     "type": "array",
                     "items": { "$ref": "#/$defs/info" }
                   }
