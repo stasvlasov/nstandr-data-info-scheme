@@ -1,12 +1,4 @@
 
-# Table of Contents
-
-1.  [JSON Schema for describing and coding datasets](#orgc5773be)
-2.  [List of coded datasets](#org5369291)
-
-
-
-<a id="orgc5773be"></a>
 
 # JSON Schema for describing and coding datasets
 
@@ -122,35 +114,11 @@ With this schema I describe and code datasets that provide standard organization
     }
 
 
-<a id="org5369291"></a>
-
 # List of coded datasets
 
 I described and coded the following datasets in plain yaml formal so it can be easealy asseced with [papis (powerful and highly extensible command-line based document and bibliography manager)](https://github.com/papis/papis).
 
-    "~/org/data" |>
-        papisr::collect_papis_records() |>
-        papisr::tabulate_papis_records(
-                    `Reference` = paste0("cite:@", info$ref, "")
-                  , `link` = paste0("[[", path, "][" , basename(path), "]]")
-                  ## , `Deployed Data Size` =
-                  ##       path |>
-                  ##       file.path("data") |>
-                  ##       list.files(recursive = TRUE, full.names = TRUE) |>
-                  ##       sapply(file.size) |>
-                  ##       sum() |>
-                  ##       utils:::format.object_size("auto")
-                  , `Deployment Scripts` = "https://github.com/stasvlasov"
-                  , `GS Citations` =
-                        if(!is.null(info$google_scholar_citations)) {
-                            paste0(
-                                "*", info$google_scholar_citations[[1]]$count, "*"
-                              , " as of ", info$google_scholar_citations[[1]]$date
-                            )
-                        }
-                )
-
-<table id="orgd3bfd2a" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orge87cfbd" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 1:</span> Datasets with Standardized Organizational Names</caption>
 
 <colgroup>
@@ -212,4 +180,28 @@ I described and coded the following datasets in plain yaml formal so it can be e
 </tr>
 </tbody>
 </table>
+
+The table above was generated with the following R script from the data description files (info.yml) on my computer using R package [papisr](https://github.com/stasvlasov/papisr).
+
+    "~/org/data" |>
+        papisr::collect_papis_records() |>
+        papisr::tabulate_papis_records(
+                    `Reference` = paste0("cite:@", info$ref, "")
+                  , `link` = paste0("[[", path, "][" , basename(path), "]]")
+                  ## , `Deployed Data Size` =
+                  ##       path |>
+                  ##       file.path("data") |>
+                  ##       list.files(recursive = TRUE, full.names = TRUE) |>
+                  ##       sapply(file.size) |>
+                  ##       sum() |>
+                  ##       utils:::format.object_size("auto")
+                  , `Deployment Scripts` = "https://github.com/stasvlasov"
+                  , `GS Citations` =
+                        if(!is.null(info$google_scholar_citations)) {
+                            paste0(
+                                "*", info$google_scholar_citations[[1]]$count, "*"
+                              , " as of ", info$google_scholar_citations[[1]]$date
+                            )
+                        }
+                )
 
