@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://raw.githubusercontent.com/stasvlasov/nstandr-data-info-scheme/master/nstandr-data-info-scheme.json",
+  "$defs": {
+    "info": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "docs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/file" }
+        }
+      }
+    },
+    "file": {
+      "allOf": [
+        { "$ref": "#/$defs/info" },
+        {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "modified": {
+              "type": "number"
+            },
+            "created": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "src": {
+      "allOf": [
+        { "$ref": "#/$defs/file" },
+        {
+          "type": "object",
+          "properties": {
+            "lang": {
+              "type": "string"
+            },
+            "developers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "implementations": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/src" }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    { "$ref": "#/$defs/info" },
+    {
+      "type": "object",
+      "properties": {
+        "src": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/src" }
+        },
+        "scripts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/file" }
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              { "$ref": "#/$defs/file" },
+              {
+                "type": "object",
+                "properties": {
+                  "period": {
+                    "type": "string"
+                  },
+                  "sources": {
+                    "type": "array",
+                    "items": { "$ref": "#/$defs/info" }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
