@@ -42,7 +42,7 @@ With this schema I describe and code datasets that provide standard organization
                   "type": "string"
                 },
                 "modified": {
-                  "type": "number"
+                  "type": "string"
                 },
                 "created": {
                   "type": "string"
@@ -81,14 +81,17 @@ With this schema I describe and code datasets that provide standard organization
           "type": "object",
           "properties": {
             "src": {
+              "description": "Source code or software used for creating this dataset",
               "type": "array",
               "items": { "$ref": "#/$defs/src" }
             },
             "scripts": {
+              "description": "Scripts for working with this dataset. E.g., data deployment, data derivations, etc.",
               "type": "array",
               "items": { "$ref": "#/$defs/file" }
             },
             "files": {
+              "description": "List of data files",
               "type": "array",
               "items": {
                 "allOf": [
@@ -97,9 +100,11 @@ With this schema I describe and code datasets that provide standard organization
                     "type": "object",
                     "properties": {
                       "period": {
+                        "description": "Time period that the data files describe",
                         "type": "string"
                       },
                       "sources": {
+                        "description": "Sources used for making the data files", 
                         "type": "array",
                         "items": { "$ref": "#/$defs/info" }
                       }
@@ -114,11 +119,39 @@ With this schema I describe and code datasets that provide standard organization
     }
 
 
+# JSON Schema cli tools and oneliners
+
+Generate schema from multiple files
+
+    tmp_json_data_array=$(mktemp) && yq eval-all --output-format=json '[.data] as $item ireduce ([]; . *+ $item )' $(find . -name 'info.yml') > $tmp_json_data_array && generate-schema --json-schema $tmp_json_data_array | jq ' {"$schema"} + .items' > schema2.json
+    
+    # remove the 'items' in schema ~jq ' {"$schema"} + .items ' schema.jsonq~
+
+Validate all `info.yml` files in current directory
+
+    schema_json=$(mktemp) && curl https://raw.githubusercontent.com/stasvlasov/nstandr-data-info-scheme/master/nstandr-data-info-scheme.json -o "$schema_json" && for file in $(find . -name 'info.yml'); do echo "$file" ; tmp_json=$(mktemp) && {yq --output-format=json '.data' "$file" > $tmp_json ; ajv validate --all-errors --errors=text -s "$schema_json" -d "$tmp_json" ; rm "$tmp_json"}; done
+    
+    
+    for file in $(find . -name 'info.yml'); do echo "$file" ; tmp_json=$(mktemp data-info.json) && {yq --output-format=json '.data' "$file" > $tmp_json ; ajv validate --all-errors --errors=text -s ~/org/research/nstandr-data-info-scheme/nstandr-data-info-scheme.json -d "$tmp_json" ; rm "$tmp_json"}; done
+    
+    # taking apart
+    yq --output-format=json '.data' info.yaml > info.json
+    
+    ajv validate --all-errors --errors=text -s ~/org/research/nstandr-data-info-scheme/nstandr-data-info-scheme.json -d info
+    
+    mktemp data-info.json
+    
+    # without mktemp
+    for file in $(find . -name "info.yml"); do yq --output-format=json ".data" "$file" > "$file.json" && ajv validate --spec=draft2019 --all-errors --errors=text -s ~/org/research/nstandr-data-info-scheme/nstandr-data-info-scheme.json -d "$file.json" && rm "$file.json"; done
+
+note: in `mktemp --suffix=.json` &#x2013;suffix does not work on MacOS
+
+
 # List of coded datasets
 
 I described and coded the following datasets in plain yaml formal so it can be easealy asseced with [papis (powerful and highly extensible command-line based document and bibliography manager)](https://github.com/papis/papis).
 
-<table id="orge87cfbd" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="orgb1e9c31" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 1:</span> Datasets with Standardized Organizational Names</caption>
 
 <colgroup>
