@@ -6,7 +6,7 @@ With this schema I describe and code datasets that provide standard organization
 
     {
       "$schema": "https://json-schema.org/draft/2019-09/schema",
-      "$id": "nil",
+      "$id": "<<github-link-to-tangled-file()>>",
       "$defs": {
         "info": {
           "type": "object",
@@ -18,6 +18,9 @@ With this schema I describe and code datasets that provide standard organization
               "type": "string"
             },
             "description": {
+              "type": "string"
+            },
+            "ref": {
               "type": "string"
             },
             "tags": {
@@ -142,19 +145,61 @@ Validate all `info.yml` files in current directory
     mktemp data-info.json
     
     # without mktemp
-    for file in $(find . -name "info.yml"); do yq --output-format=json ".data" "$file" > "$file.json" && ajv validate --spec=draft2019 --all-errors --errors=text -s ~/org/research/nstandr-data-info-scheme/nstandr-data-info-scheme.json -d "$file.json" && rm "$file.json"; done
+    for file in $(find . -name "info.yml"); do yq --output-format=json ".data" "$file" > "$file.json" && ajv validate --spec=draft2019 --all-errors --errors=text -s ~/org/research/nstandr-data-info-schema/nstandr-data-info-schema.json -d "$file.json" && rm "$file.json"; done
+
+    
+    file= && yq --output-format=json ".data" "$file" > "$file.json" && ajv validate --spec=draft2019 --all-errors --errors=text -s ~/org/research/nstandr-data-info-schema/nstandr-data-info-schema.json -d "$file.json" && rm "$file.json"
 
 note: in `mktemp --suffix=.json` &#x2013;suffix does not work on MacOS
+
+
+# NoWeb Snippets (injecting)
+
+    (concat
+     (thread-last
+       (shell-command-to-string "git config --get remote.origin.url")
+       (string-replace ".git"
+                       "/master/")
+       (string-replace "https://github.com/"
+                       "https://raw.githubusercontent.com/")
+       (string-trim))
+     (save-excursion (org-babel-goto-named-src-block "nstandr-data-info-schema")
+                     (thread-last (org-babel-get-src-block-info 'light)
+                                  (nth 2)
+                                  (alist-get :tangle))))
+
+    (save-excursion
+      (mapconcat
+       'identity
+       (org-map-entries
+        (lambda ()
+          (org-babel-next-src-block)
+          (let ((title (org-no-properties (org-get-heading 'no-tags)))
+                (tags (org-entry-get nil "script_tags"))
+                (url (thread-last (org-babel-get-src-block-info 'light)
+                                  (nth 2)
+                                  (nth 2)
+                                  (cdr))))
+            (concat "- title: " title "\n"
+                    "  tags: [" tags "]\n"
+                    "  url: " url)))
+        "script_tags={.}" 'file)
+         "\n"))
+
+    papis --clear-cache
+    papis export --format=yaml "ref:$ref"
 
 
 # List of coded datasets
 
 I described and coded the following datasets in plain yaml formal so it can be easealy asseced with [papis (powerful and highly extensible command-line based document and bibliography manager)](https://github.com/papis/papis).
 
-<table id="orgb1e9c31" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table id="org42cb33f" border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption class="t-above"><span class="table-number">Table 1:</span> Datasets with Standardized Organizational Names</caption>
 
 <colgroup>
+<col  class="org-left" />
+
 <col  class="org-left" />
 
 <col  class="org-left" />
@@ -167,7 +212,8 @@ I described and coded the following datasets in plain yaml formal so it can be e
 <tr>
 <th scope="col" class="org-left">Reference</th>
 <th scope="col" class="org-left">link</th>
-<th scope="col" class="org-left">Deployment Scripts</th>
+<th scope="col" class="org-left">Data Size</th>
+<th scope="col" class="org-left"><a href="https://github.com/stasvlasov/nstandr-data-info-scheme">schema</a></th>
 <th scope="col" class="org-left">GS Citations</th>
 </tr>
 </thead>
@@ -176,7 +222,8 @@ I described and coded the following datasets in plain yaml formal so it can be e
 <tr>
 <td class="org-left"><a href="@magerman2006">@magerman2006</a></td>
 <td class="org-left"><a href="file:///Users/stas/org/data/patents/eee-ppat">eee-ppat</a></td>
-<td class="org-left"><a href="https://github.com/stasvlasov">https://github.com/stasvlasov</a></td>
+<td class="org-left">12.9 Gb</td>
+<td class="org-left">valid</td>
 <td class="org-left"><b>119</b> as of 2022-06-02</td>
 </tr>
 
@@ -184,7 +231,8 @@ I described and coded the following datasets in plain yaml formal so it can be e
 <tr>
 <td class="org-left"><a href="@Coffano2014">@Coffano2014</a></td>
 <td class="org-left"><a href="file:///Users/stas/org/data/patents/icrios">icrios</a></td>
-<td class="org-left"><a href="https://github.com/stasvlasov">https://github.com/stasvlasov</a></td>
+<td class="org-left">110.6 Mb</td>
+<td class="org-left">valid</td>
 <td class="org-left"><b>62</b> as of 2022-06-02</td>
 </tr>
 
@@ -192,7 +240,8 @@ I described and coded the following datasets in plain yaml formal so it can be e
 <tr>
 <td class="org-left"><a href="@Thoma2010">@Thoma2010</a></td>
 <td class="org-left"><a href="file:///Users/stas/org/data/patents/mdpt">mdpt</a></td>
-<td class="org-left"><a href="https://github.com/stasvlasov">https://github.com/stasvlasov</a></td>
+<td class="org-left">1.1 Gb</td>
+<td class="org-left">valid</td>
 <td class="org-left"><b>140</b> as of 2022-06-02</td>
 </tr>
 
@@ -200,7 +249,8 @@ I described and coded the following datasets in plain yaml formal so it can be e
 <tr>
 <td class="org-left"><a href="@Hall2001">@Hall2001</a></td>
 <td class="org-left"><a href="file:///Users/stas/org/data/patents/nber-pdp">nber-pdp</a></td>
-<td class="org-left"><a href="https://github.com/stasvlasov">https://github.com/stasvlasov</a></td>
+<td class="org-left">6.3 Gb</td>
+<td class="org-left">valid</td>
 <td class="org-left"><b>4869</b> as of 2022-06-02</td>
 </tr>
 
@@ -208,7 +258,8 @@ I described and coded the following datasets in plain yaml formal so it can be e
 <tr>
 <td class="org-left">cite:@</td>
 <td class="org-left"><a href="file:///Users/stas/org/data/patents/oecd-han">oecd-han</a></td>
-<td class="org-left"><a href="https://github.com/stasvlasov">https://github.com/stasvlasov</a></td>
+<td class="org-left">4.6 Gb</td>
+<td class="org-left">valid</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
@@ -216,19 +267,25 @@ I described and coded the following datasets in plain yaml formal so it can be e
 
 The table above was generated with the following R script from the data description files (info.yml) on my computer using R package [papisr](https://github.com/stasvlasov/papisr).
 
-    "~/org/data" |>
+    "~/org/data/patents" |>
         papisr::collect_papis_records() |>
         papisr::tabulate_papis_records(
                     `Reference` = paste0("cite:@", info$ref, "")
                   , `link` = paste0("[[", path, "][" , basename(path), "]]")
-                  ## , `Deployed Data Size` =
-                  ##       path |>
-                  ##       file.path("data") |>
-                  ##       list.files(recursive = TRUE, full.names = TRUE) |>
-                  ##       sapply(file.size) |>
-                  ##       sum() |>
-                  ##       utils:::format.object_size("auto")
-                  , `Deployment Scripts` = "https://github.com/stasvlasov"
+                  , `Size` =
+                        romRDS::rom_rds(paste0("data_size_", basename(path)) , {
+                        path |>
+                        file.path("data") |>
+                        list.files(recursive = TRUE, full.names = TRUE) |>
+                        sapply(file.size) |>
+                        sum() |>
+                        utils:::format.object_size("auto")
+                        })
+                  ## , `Deployment Scripts` = "https://github.com/stasvlasov"
+                  , `[[https://github.com/stasvlasov/nstandr-data-info-scheme][info.yml]]` = {
+                      exit_code <- system(paste0('file="', path, '/info.yml" && yq --output-format=json ".data" "$file" > "$file.json" && ajv validate --spec=draft2019 --all-errors --errors=text -s ~/org/research/nstandr-data-info-schema/nstandr-data-info-schema.json -d "$file.json" && rm "$file.json"'))
+                      if(exit_code == 0) {'valid'} else {'invalid'}
+                  }
                   , `GS Citations` =
                         if(!is.null(info$google_scholar_citations)) {
                             paste0(
